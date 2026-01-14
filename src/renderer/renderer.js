@@ -172,7 +172,6 @@ async function initSettings() {
   applyTheme(state.currentSettings.themeColor || 'neon-blue');
   
   // Apply settings to UI
-  document.getElementById('themeColor').value = state.currentSettings.themeColor || 'neon-blue';
   document.getElementById('autoPlayVideos').checked = state.currentSettings.autoPlayVideos;
   document.getElementById('showFileNames').checked = state.currentSettings.showFileNames;
   document.getElementById('thumbnailSize').value = state.currentSettings.thumbnailSize;
@@ -180,6 +179,16 @@ async function initSettings() {
   document.getElementById('slideShowInterval').value = state.currentSettings.slideShowInterval / 1000;
   document.getElementById('sortSelect').value = state.currentSettings.sortBy;
   document.getElementById('filterSelect').value = state.currentSettings.filterBy || 'all';
+  
+  // Set active theme button
+  const currentTheme = state.currentSettings.themeColor || 'neon-blue';
+  document.querySelectorAll('.theme-color-btn').forEach(btn => {
+    if (btn.dataset.color === currentTheme) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
   
   // Apply thumbnail size
   elements.gallery.className = `gallery thumbnail-${state.currentSettings.thumbnailSize}`;
@@ -755,11 +764,18 @@ function setupEventListeners() {
     }
   });
   
-  // Settings changes
-  document.getElementById('themeColor').addEventListener('change', async (e) => {
-    await window.api.setSetting('themeColor', e.target.value);
-    state.currentSettings.themeColor = e.target.value;
-    applyTheme(e.target.value);
+  // Settings changes - Theme color buttons
+  document.querySelectorAll('.theme-color-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const color = e.target.dataset.color;
+      await window.api.setSetting('themeColor', color);
+      state.currentSettings.themeColor = color;
+      applyTheme(color);
+      
+      // Update active state
+      document.querySelectorAll('.theme-color-btn').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+    });
   });
   
   document.getElementById('autoPlayVideos').addEventListener('change', async (e) => {

@@ -1,7 +1,7 @@
 {
   "name": "neoninja-view",
   "version": "1.2.0",
-  "description": "NeoNinja View - High-performance local media viewer with modern design",
+  "description": "NeoNinja View - High-performance local media viewer with modern dark theme",
   "main": "main.js",
   "author": "NeoNinja Team",
   "repository": {
