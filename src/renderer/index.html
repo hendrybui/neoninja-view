@@ -14,10 +14,21 @@
     <header class="header">
       <div class="header-left">
         <div class="logo">
-          <span class="logo-icon">🥷</span>
+          <svg class="logo-icon" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#0099cc;stop-opacity:1" />
+              </linearGradient>
+            </defs>
+            <circle cx="20" cy="20" r="18" fill="url(#logoGradient)" opacity="0.2"/>
+            <circle cx="20" cy="20" r="14" fill="none" stroke="url(#logoGradient)" stroke-width="2"/>
+            <path d="M20 8 L20 32 M8 20 L32 20" stroke="url(#logoGradient)" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="20" cy="20" r="6" fill="url(#logoGradient)"/>
+          </svg>
           <div class="logo-text">
-            <h1>NeoNinja</h1>
-            <span class="logo-subtitle">View v1.2</span>
+            <h1>NeoNinja View</h1>
+            <span class="logo-subtitle">Professional Media Viewer</span>
           </div>
         </div>
       </div>
@@ -29,11 +40,10 @@
       </div>
       <div class="header-right">
         <button id="pickFolder" class="header-btn primary-btn">
-          <span class="btn-icon">📁</span>
-          <span>Open Folder</span>
+          <span class="btn-icon">Open Folder</span>
         </button>
         <button id="settingsBtn" class="header-btn" title="Settings">
-          <span class="btn-icon">⚙️</span>
+          <span class="btn-icon">⚙</span>
         </button>
       </div>
     </header>
@@ -178,7 +188,7 @@
   <div id="settingsPanel" class="settings-panel">
     <div class="settings-header">
       <h2>
-        <span class="settings-icon">⚙️</span>
+        <span class="settings-icon">⚙</span>
         Settings
       </h2>
       <button class="close-settings">×</button>
@@ -201,14 +211,14 @@
           <label>Thumbnail Size</label>
           <select id="thumbnailSize" class="styled-select">
             <option value="small">Small (120px)</option>
-            <option value="medium">Medium (200px)</option>
+            <option value="medium" selected>Medium (200px)</option>
             <option value="large">Large (300px)</option>
           </select>
         </div>
       </div>
       
       <div class="settings-section">
-        <h3>Display</h3>
+        <h3>Display Options</h3>
         <div class="setting-group checkbox-group">
           <label class="checkbox-label">
             <input type="checkbox" id="autoPlayVideos">
@@ -218,7 +228,7 @@
         </div>
         <div class="setting-group checkbox-group">
           <label class="checkbox-label">
-            <input type="checkbox" id="showFileNames">
+            <input type="checkbox" id="showFileNames" checked>
             <span class="checkbox-custom"></span>
             <span class="checkbox-text">Show file names</span>
           </label>
@@ -226,7 +236,7 @@
         <div class="setting-group">
           <label>Viewer Mode</label>
           <select id="viewerMode" class="styled-select">
-            <option value="fit">Fit to Screen</option>
+            <option value="fit" selected>Fit to Screen</option>
             <option value="fill">Fill Screen</option>
             <option value="original">Original Size</option>
           </select>
@@ -234,17 +244,16 @@
       </div>
       
       <div class="settings-section">
-        <h3>Slideshow</h3>
+        <h3>Slideshow Settings</h3>
         <div class="setting-group">
           <label>Interval (seconds)</label>
-          <input type="number" id="slideShowInterval" min="1" max="60" step="1" class="styled-input">
+          <input type="number" id="slideShowInterval" min="1" max="60" step="1" value="3" class="styled-input">
         </div>
       </div>
       
       <div class="settings-section">
         <button class="reset-btn" id="resetSettings">
-          <span>🔄</span>
-          Reset to Defaults
+          <span>Reset to Defaults</span>
         </button>
       </div>
     </div>
