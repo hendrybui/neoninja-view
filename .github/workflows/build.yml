@@ -46,21 +46,15 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.os }}-build
-          path: |
-            dist/**/*
-            !dist/linux-unpacked
-            !dist/win-unpacked
+          path: dist/
           retention-days: 30
 
       - name: Create Release (on tag)
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v1
         with:
-          files: |
-            dist/NeoNinja View Setup*.exe
-            dist/NeoNinja View-*.dmg
-            dist/NeoNinja View-*.AppImage
-            dist/NeoNinja View-*.snap
+          draft: false
+          generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -72,29 +66,16 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-
-      - name: Generate release notes
+        
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          
+      - name: Create Release with Artifacts
         uses: softprops/action-gh-release@v1
         with:
-          body: |
-            ## NeoNinja View Release
-
-            ### Downloads
-            - **Windows**: NeoNinja View Setup.exe
-            - **macOS**: NeoNinja View.dmg
-            - **Linux**: NeoNinja View.AppImage or .snap
-
-            ### Installation
-            - Windows: Double-click the installer
-            - macOS: Drag app to Applications folder
-            - Linux: Make AppImage executable and run
-
-            ### What's New
-            See CHANGELOG.md for details.
-
-            ### System Requirements
-            - **Windows**: Windows 10 or later
-            - **macOS**: macOS 11 or later
-            - **Linux**: Any modern Linux distribution
+          files: artifacts/**/*
+          generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
