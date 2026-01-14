@@ -1,0 +1,56 @@
+{
+  "name": "neoninja-view",
+  "version": "1.2.0",
+  "description": "NeoNinja View - High-performance local media viewer with modern design",
+  "main": "main.js",
+  "author": "NeoNinja Team",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hendrybui/neoninja-view.git"
+  },
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "lint": "eslint main.js src/**/*.js"
+  },
+  "build": {
+    "appId": "com.neoninja.viewer",
+    "productName": "NeoNinja View",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "**/*",
+      "!dist/*"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "build/icon.icns"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "build/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico"
+    }
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "electron": "^39.2.7",
+    "electron-builder": "^26.4.0",
+    "eslint": "^9.39.2"
+  },
+  "dependencies": {
+    "electron-store": "^11.0.2",
+    "sharp": "^0.34.5"
+  }
+}
