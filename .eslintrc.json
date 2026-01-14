@@ -1,0 +1,30 @@
+{
+  "env": {
+    "node": true,
+    "browser": true,
+    "es2021": true
+  },
+  "extends": ["eslint:recommended"],
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "rules": {
+    "no-console": "off",
+    "no-unused-vars": "warn",
+    "require-await": "off",
+    "max-statements": "off",
+    "complexity": "warn",
+    "no-trailing-spaces": "error",
+    "prefer-template": "warn",
+    "prefer-arrow-callback": "warn"
+  },
+  "globals": {
+    "require": "readonly",
+    "__dirname": "readonly",
+    "process": "readonly",
+    "console": "readonly",
+    "contextBridge": "readonly",
+    "ipcRenderer": "readonly"
+  }
+}

@@ -1,5 +1,5 @@
-/* eslint-env node */
-/* eslint-disable no-unused-vars */
+/* global require */
+
 // preload.js - NeoNinja View v1.2 - Secure IPC Bridge
 const { contextBridge, ipcRenderer } = require('electron');
 
@@ -8,7 +8,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 contextBridge.exposeInMainWorld('api', {
   // Dialog operations
   openDirectory: () => ipcRenderer.invoke('dialog:openDirectory'),
-  
+
   // File operations
   scanFiles: (dirPath) => ipcRenderer.invoke('files:scan', dirPath),
   getFolderTree: (rootPath) => ipcRenderer.invoke('files:getFolderTree', rootPath),
@@ -26,16 +26,16 @@ contextBridge.exposeInMainWorld('api', {
   generateThumbnail: (filePath, size) => ipcRenderer.invoke('file:generateThumbnail', filePath, size),
   moveFile: (sourcePath, targetPath) => ipcRenderer.invoke('file:move', sourcePath, targetPath),
   saveFile: (blob, fileName) => ipcRenderer.invoke('file:save', blob, fileName),
-  
+
   // Batch operations
   batchMove: (files, targetDir) => ipcRenderer.invoke('files:batchMove', files, targetDir),
   batchDelete: (files) => ipcRenderer.invoke('files:batchDelete', files),
-  
+
   // Settings operations
   getSettings: (key) => ipcRenderer.invoke('settings:get', key),
   setSetting: (key, value) => ipcRenderer.invoke('settings:set', key, value),
   resetSettings: () => ipcRenderer.invoke('settings:reset'),
-  
+
   // Event listeners
   onFolderSelected: (callback) => ipcRenderer.on('folder-selected', (event, path) => callback(path)),
   onViewChanged: (callback) => ipcRenderer.on('view-changed', (event, view) => callback(view)),
@@ -45,7 +45,7 @@ contextBridge.exposeInMainWorld('api', {
   onSettingsReset: (callback) => ipcRenderer.on('settings-reset', () => callback()),
   onToggleSidebar: (callback) => ipcRenderer.on('toggle-sidebar', () => callback()),
   onShowKeyboardHelp: (callback) => ipcRenderer.on('show-keyboard-help', () => callback()),
-  
+
   // Remove listeners
   removeAllListeners: () => ipcRenderer.removeAllListeners('folder-selected')
 });

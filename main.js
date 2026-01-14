@@ -1,6 +1,5 @@
-/* eslint-env node */
 /* global require, __dirname, process, console */
-/* eslint-disable no-inner-declarations */
+
 // main.js - NeoNinja View v1.2 - Optimized Main Process
 const { app, BrowserWindow, ipcMain, dialog, Menu, nativeImage } = require('electron');
 const path = require('path');
@@ -42,7 +41,7 @@ const defaultSettings = {
 class SettingsManager {
   constructor() {
     const { default: Store } = require('electron-store');
-    this.store = new Store({ 
+    this.store = new Store({
       defaults: defaultSettings,
       projectName: 'neoninja-view'
     });
@@ -95,13 +94,13 @@ async function scanDirectoryRecursive(directory, extensions, cacheKey = null) {
   }
 
   const mediaFiles = [];
-  
+
   try {
     const entries = await fs.readdir(directory, { withFileTypes: true });
-    
-    const promises = entries.map(async (entry) => {
+
+    const promises = entries.map(async (entry) => { // eslint-disable-line require-await
       const fullPath = path.join(directory, entry.name);
-      
+
       if (entry.isDirectory()) {
         return scanDirectoryRecursive(fullPath, extensions);
       } else if (entry.isFile()) {
@@ -125,7 +124,7 @@ async function scanDirectoryRecursive(directory, extensions, cacheKey = null) {
       files: mediaFiles,
       timestamp: Date.now()
     });
-    
+
     // Clean old cache entries
     if (fileCache.size > settings.get('maxCacheSize')) {
       const oldestKey = Array.from(fileCache.keys())[0];
@@ -171,10 +170,10 @@ async function buildFolderTree(dirPath, imageExtensions, videoExtensions, isRoot
     }
 
     const childFolders = await Promise.all(folderPromises);
-    
+
     // Only include folders that have files
     for (const childFolder of childFolders) {
-      const childTotal = childFolder.imageCount + childFolder.videoCount + 
+      const childTotal = childFolder.imageCount + childFolder.videoCount +
                         (childFolder.totalImageCount || 0) + (childFolder.totalVideoCount || 0);
       if (childTotal > 0) {
         folder.children.push(childFolder);
@@ -199,7 +198,7 @@ async function buildFolderTree(dirPath, imageExtensions, videoExtensions, isRoot
 // Optimized thumbnail generation with caching
 async function generateThumbnail(filePath, size = 300) {
   const cacheKey = `${filePath}_${size}`;
-  
+
   // Check cache
   if (thumbnailCache.has(cacheKey)) {
     return thumbnailCache.get(cacheKey);
@@ -218,10 +217,10 @@ async function generateThumbnail(filePath, size = 300) {
       .toBuffer();
 
     const result = `data:image/jpeg;base64,${thumbnail.toString('base64')}`;
-    
+
     // Cache result
     thumbnailCache.set(cacheKey, result);
-    
+
     // Clean old cache entries
     if (thumbnailCache.size > 200) {
       const oldestKey = Array.from(thumbnailCache.keys())[0];
@@ -238,7 +237,7 @@ async function generateThumbnail(filePath, size = 300) {
 // Optimized metadata extraction
 async function extractMetadata(filePath) {
   const cacheKey = filePath;
-  
+
   // Check cache
   if (metadataCache.has(cacheKey)) {
     return metadataCache.get(cacheKey);
@@ -259,7 +258,7 @@ async function extractMetadata(filePath) {
 
     // Cache result
     metadataCache.set(cacheKey, metadata);
-    
+
     // Clean old cache entries
     if (metadataCache.size > 500) {
       const oldestKey = Array.from(metadataCache.keys())[0];
@@ -279,7 +278,7 @@ function formatBytes(bytes, decimals = 2) {
   const dm = decimals < 0 ? 0 : decimals;
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))  } ${  sizes[i]}`;
 }
 
 function createWindow() {
@@ -301,12 +300,12 @@ function createWindow() {
   });
 
   mainWindow.loadFile('src/renderer/index.html');
-  
+
   // Show window when ready to prevent visual glitches
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
   });
-  
+
   createMenu(mainWindow);
 }
 
@@ -517,12 +516,12 @@ function createMenu(mainWindow) {
 app.whenReady().then(() => {
   createWindow();
 
-  app.on('activate', function () {
+  app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 });
 
-app.on('window-all-closed', function () {
+app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
 
@@ -632,18 +631,18 @@ ipcMain.handle('file:paste', async (event, targetDir) => {
   try {
     const { clipboard } = require('electron');
     const clipText = clipboard.readText();
-    
+
     if (clipText.startsWith('cut:')) {
       const sourcePath = clipText.substring(4);
       const fileName = path.basename(sourcePath);
       const targetPath = path.join(targetDir, fileName);
-      
+
       await fs.rename(sourcePath, targetPath);
       // Clear cache
       clearCacheForPath(sourcePath);
       return { success: true, message: 'File moved', path: targetPath };
     }
-    
+
     return { success: false, error: 'No file to paste' };
   } catch (err) {
     console.error('Error pasting file:', err);
@@ -704,7 +703,7 @@ ipcMain.handle('file:rotate', async (event, filePath, angle) => {
     const rotated = await sharp(buffer)
       .rotate(angle)
       .toBuffer();
-    
+
     await fs.writeFile(filePath, rotated);
     // Clear cache
     clearCacheForPath(filePath);
@@ -720,13 +719,13 @@ ipcMain.handle('file:flip', async (event, filePath, direction) => {
     const sharp = require('sharp');
     const buffer = await fs.readFile(filePath);
     let transform = sharp(buffer);
-    
+
     if (direction === 'horizontal') {
       transform = transform.flop();
     } else if (direction === 'vertical') {
       transform = transform.flip();
     }
-    
+
     const flipped = await transform.toBuffer();
     await fs.writeFile(filePath, flipped);
     // Clear cache
@@ -801,15 +800,15 @@ ipcMain.handle('file:save', async (event, blob, fileName) => {
         { name: 'JPEG Image', extensions: ['jpg', 'jpeg'] }
       ]
     });
-    
+
     if (canceled || !filePath) {
       return { success: false, error: 'Save canceled' };
     }
-    
+
     const arrayBuffer = await blob.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
     await fs.writeFile(filePath, buffer);
-    
+
     return { success: true, path: filePath };
   } catch (err) {
     console.error('Error saving file:', err);
@@ -825,13 +824,13 @@ function clearCacheForPath(filePath) {
       fileCache.delete(key);
     }
   }
-  
+
   for (const key of thumbnailCache.keys()) {
     if (key.startsWith(filePath)) {
       thumbnailCache.delete(key);
     }
   }
-  
+
   if (metadataCache.has(filePath)) {
     metadataCache.delete(filePath);
   }
@@ -840,20 +839,20 @@ function clearCacheForPath(filePath) {
 // Clear all caches periodically
 setInterval(() => {
   const now = Date.now();
-  
+
   // Clear old file cache entries
   for (const [key, value] of fileCache.entries()) {
     if (now - value.timestamp > 300000) { // 5 minutes
       fileCache.delete(key);
     }
   }
-  
+
   // Limit thumbnail cache size
   if (thumbnailCache.size > 200) {
     const keysToDelete = Array.from(thumbnailCache.keys()).slice(0, 50);
     keysToDelete.forEach(key => thumbnailCache.delete(key));
   }
-  
+
   // Limit metadata cache size
   if (metadataCache.size > 500) {
     const keysToDelete = Array.from(metadataCache.keys()).slice(0, 100);

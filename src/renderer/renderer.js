@@ -77,12 +77,12 @@ function showToast(message, type = 'info') {
     <span class="toast-message">${message}</span>
   `;
   container.appendChild(toast);
-  
+
   // Animate in
   requestAnimationFrame(() => {
     toast.classList.add('show');
   });
-  
+
   // Remove after delay
   setTimeout(() => {
     toast.classList.remove('show');
@@ -143,7 +143,7 @@ function showContextMenu(x, y, filePath) {
   menu.style.display = 'block';
   menu.style.left = `${x}px`;
   menu.style.top = `${y}px`;
-  
+
   // Adjust position if off screen
   const rect = menu.getBoundingClientRect();
   if (rect.right > window.innerWidth) {
@@ -162,15 +162,15 @@ function hideContextMenu() {
 // Settings initialization
 async function initSettings() {
   state.currentSettings = await window.api.getSettings();
-  
+
   // Initialize favorites if not present
   if (!state.currentSettings.favorites) {
     state.currentSettings.favorites = [];
   }
-  
+
   // Apply theme
   applyTheme(state.currentSettings.themeColor || 'neon-blue');
-  
+
   // Apply settings to UI
   document.getElementById('autoPlayVideos').checked = state.currentSettings.autoPlayVideos;
   document.getElementById('showFileNames').checked = state.currentSettings.showFileNames;
@@ -179,7 +179,7 @@ async function initSettings() {
   document.getElementById('slideShowInterval').value = state.currentSettings.slideShowInterval / 1000;
   document.getElementById('sortSelect').value = state.currentSettings.sortBy;
   document.getElementById('filterSelect').value = state.currentSettings.filterBy || 'all';
-  
+
   // Set active theme button
   const currentTheme = state.currentSettings.themeColor || 'neon-blue';
   document.querySelectorAll('.theme-color-btn').forEach(btn => {
@@ -189,7 +189,7 @@ async function initSettings() {
       btn.classList.remove('active');
     }
   });
-  
+
   // Apply thumbnail size
   elements.gallery.className = `gallery thumbnail-${state.currentSettings.thumbnailSize}`;
 }
@@ -204,7 +204,7 @@ function applyTheme(color) {
     'neon-orange': { primary: '#ff9500', secondary: '#cc7700', accent: '#995900', glow: 'rgba(255, 149, 0, 0.3)' },
     'neon-red': { primary: '#ff4757', secondary: '#cc3846', accent: '#992935', glow: 'rgba(255, 71, 87, 0.3)' }
   };
-  
+
   const theme = themes[color] || themes['neon-blue'];
   document.documentElement.style.setProperty('--theme-primary', theme.primary);
   document.documentElement.style.setProperty('--theme-secondary', theme.secondary);
@@ -216,15 +216,15 @@ function applyTheme(color) {
 async function loadFolder(folderPath, updateTree = true) {
   state.currentRootPath = folderPath;
   state.currentFolderPath = folderPath;
-  
+
   // Show sidebar
   elements.sidebar.style.display = 'flex';
-  
+
   if (updateTree) {
     state.folderTreeData = await window.api.getFolderTree(folderPath);
     renderFolderTree(state.folderTreeData);
   }
-  
+
   const files = await window.api.scanFiles(folderPath);
   state.currentFiles = files;
   elements.controlsBar.style.display = files.length > 0 ? 'flex' : 'none';
@@ -237,7 +237,7 @@ async function loadFolderFromTree(folderPath) {
   state.currentFiles = files;
   elements.controlsBar.style.display = files.length > 0 ? 'flex' : 'none';
   renderGallery(files);
-  
+
   // Update active state
   document.querySelectorAll('.folder-item').forEach(item => {
     item.classList.remove('active');
@@ -253,24 +253,24 @@ function renderFolderTree(folderData) {
     elements.folderTree.innerHTML = '<div class="placeholder"><span class="placeholder-icon">❌</span><p>Error loading folders</p></div>';
     return;
   }
-  
+
   // Update summary
   elements.folderSummary.style.display = 'block';
   document.getElementById('totalImages').textContent = folderData.totalImageCount || 0;
   document.getElementById('totalVideos').textContent = folderData.totalVideoCount || 0;
   document.getElementById('totalFiles').textContent = (folderData.totalImageCount || 0) + (folderData.totalVideoCount || 0);
-  
+
   elements.folderTree.innerHTML = '';
-  
+
   function createFolderElement(folder, isRoot = false) {
     const folderItem = document.createElement('div');
     folderItem.className = `folder-item ${isRoot ? 'root' : ''} ${folder.path === state.currentFolderPath ? 'active' : ''}`;
     folderItem.dataset.path = folder.path;
-    
+
     const totalImages = folder.totalImageCount || 0;
     const totalVideos = folder.totalVideoCount || 0;
     const hasFiles = totalImages > 0 || totalVideos > 0;
-    
+
     let countsHTML = '';
     if (hasFiles) {
       countsHTML = '<span class="folder-count">';
@@ -282,37 +282,37 @@ function renderFolderTree(folderData) {
       }
       countsHTML += '</span>';
     }
-    
+
     folderItem.innerHTML = `
       <span class="folder-icon">📁</span>
       <span class="folder-name" title="${folder.name}">${folder.name}</span>
       ${countsHTML}
     `;
-    
+
     folderItem.addEventListener('click', (e) => {
       e.stopPropagation();
       loadFolderFromTree(folder.path);
     });
-    
+
     return folderItem;
   }
-  
+
   function renderFolder(folder, container, isRoot = false) {
     const folderElement = createFolderElement(folder, isRoot);
     container.appendChild(folderElement);
-    
+
     if (folder.children && folder.children.length > 0) {
       const childrenContainer = document.createElement('div');
       childrenContainer.className = 'folder-children';
-      
+
       folder.children
         .sort((a, b) => a.name.localeCompare(b.name))
         .forEach(child => renderFolder(child, childrenContainer));
-      
+
       container.appendChild(childrenContainer);
     }
   }
-  
+
   renderFolder(folderData, elements.folderTree, true);
 }
 
@@ -320,10 +320,10 @@ function renderFolderTree(folderData) {
 function sortFiles(files) {
   const sorted = [...files];
   const { sortBy, sortOrder } = state.currentSettings;
-  
+
   sorted.sort((a, b) => {
     let compareA, compareB;
-    
+
     if (sortBy === 'name') {
       compareA = a.toLowerCase();
       compareB = b.toLowerCase();
@@ -337,18 +337,18 @@ function sortFiles(files) {
       compareA = a;
       compareB = b;
     }
-    
+
     const result = compareA < compareB ? -1 : compareA > compareB ? 1 : 0;
     return sortOrder === 'asc' ? result : -result;
   });
-  
+
   return sorted;
 }
 
 // Gallery rendering with virtual scrolling optimization
 function renderGallery(files) {
   elements.gallery.innerHTML = '';
-  
+
   if (files.length === 0) {
     elements.gallery.innerHTML = `
       <div class="placeholder">
@@ -362,7 +362,7 @@ function renderGallery(files) {
   // Filter by type
   let filteredFiles = files;
   const filterBy = state.currentSettings.filterBy || 'all';
-  
+
   if (filterBy === 'images') {
     filteredFiles = files.filter(file => {
       const ext = file.split('.').pop().toLowerCase();
@@ -374,7 +374,7 @@ function renderGallery(files) {
       return state.currentSettings.supportedFormats.videos.some(v => v === `.${ext}`);
     });
   }
-  
+
   if (filteredFiles.length === 0) {
     elements.gallery.innerHTML = `
       <div class="placeholder">
@@ -386,24 +386,24 @@ function renderGallery(files) {
   }
 
   const sortedFiles = sortFiles(filteredFiles);
-  
+
   // Apply view mode
   if (state.currentSettings.defaultView === 'list') {
     elements.gallery.className = `gallery list-view-mode thumbnail-${state.currentSettings.thumbnailSize}`;
   } else if (state.currentSettings.defaultView === 'detail') {
-    elements.gallery.className = `gallery detail-view-mode`;
+    elements.gallery.className = 'gallery detail-view-mode';
   } else {
     elements.gallery.className = `gallery thumbnail-${state.currentSettings.thumbnailSize}`;
   }
 
   // Use DocumentFragment for better performance
   const fragment = document.createDocumentFragment();
-  
+
   sortedFiles.forEach((file, index) => {
     const item = createGalleryItem(file, index);
     fragment.appendChild(item);
   });
-  
+
   elements.gallery.appendChild(fragment);
 }
 
@@ -412,28 +412,28 @@ function createGalleryItem(file, index) {
   const isVideo = state.currentSettings.supportedFormats.videos.some(v => v === `.${ext}`);
   const fileName = file.split('\\').pop().split('/').pop();
   const isFavorite = state.currentSettings.favorites.includes(file);
-  
+
   const item = document.createElement('div');
   item.className = 'gallery-item';
   item.dataset.filePath = file;
   item.dataset.index = index;
-  
+
   // Media element
   const media = isVideo
     ? document.createElement('video')
     : document.createElement('img');
-    
+
   media.src = `file://${file}`;
   media.className = 'gallery-media';
   media.loading = 'lazy';
-  
+
   // Video handling
   if (isVideo) {
     media.muted = true;
     media.loop = true;
     media.playsInline = true;
     media.preload = 'metadata';
-    
+
     media.addEventListener('loadedmetadata', () => {
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -444,10 +444,10 @@ function createGalleryItem(file, index) {
           }
         });
       }, { threshold: 0.5 });
-      
+
       observer.observe(media);
     });
-    
+
     if (state.currentSettings.autoPlayVideos) {
       media.addEventListener('mouseenter', () => {
         media.play().catch(() => {});
@@ -457,16 +457,16 @@ function createGalleryItem(file, index) {
       });
     }
   }
-  
+
   // Click handling
   let clickTimeout = null;
   let lastClickTime = 0;
-  
+
   item.addEventListener('click', (e) => {
     e.preventDefault();
     const currentTime = Date.now();
     const timeDiff = currentTime - lastClickTime;
-    
+
     if (timeDiff < 300) {
       clearTimeout(clickTimeout);
       openViewer(file, isVideo);
@@ -476,24 +476,24 @@ function createGalleryItem(file, index) {
         toggleFileSelection(file, addToSelection);
       }, 300);
     }
-    
+
     lastClickTime = currentTime;
   });
-  
+
   item.addEventListener('dblclick', (e) => {
     e.preventDefault();
     clearTimeout(clickTimeout);
     openViewer(file, isVideo);
   });
-  
+
   // Context menu
   item.addEventListener('contextmenu', (e) => {
     e.preventDefault();
     showContextMenu(e.clientX, e.clientY, file);
   });
-  
+
   item.appendChild(media);
-  
+
   // File info based on view mode
   if (state.currentSettings.defaultView === 'list') {
     const info = document.createElement('div');
@@ -532,7 +532,7 @@ function createGalleryItem(file, index) {
     `;
     item.appendChild(info);
   }
-  
+
   return item;
 }
 
@@ -545,24 +545,24 @@ function openViewer(file, isVideo) {
 
 function showCurrentMedia() {
   elements.viewerContent.innerHTML = '';
-  
+
   const file = state.currentFiles[state.currentViewerIndex];
   const ext = file.split('.').pop().toLowerCase();
   const isVideo = state.currentSettings.supportedFormats.videos.some(v => v === `.${ext}`);
-  
-  const media = isVideo 
-    ? document.createElement('video') 
+
+  const media = isVideo
+    ? document.createElement('video')
     : document.createElement('img');
-    
+
   media.src = `file://${file}`;
   media.className = `viewer-media viewer-mode-${state.currentSettings.viewerMode || 'fit'}`;
-  
+
   if (isVideo) {
     media.controls = true;
     media.autoplay = true;
     media.loop = state.currentSettings.videoLoop !== false;
   }
-  
+
   // Navigation arrows
   if (state.currentFiles.length > 1) {
     const prevBtn = document.createElement('button');
@@ -572,7 +572,7 @@ function showCurrentMedia() {
       e.stopPropagation();
       navigateViewer(-1);
     };
-    
+
     const nextBtn = document.createElement('button');
     nextBtn.className = 'nav-arrow nav-arrow-right';
     nextBtn.innerHTML = '›';
@@ -580,35 +580,35 @@ function showCurrentMedia() {
       e.stopPropagation();
       navigateViewer(1);
     };
-    
+
     elements.viewerContent.appendChild(prevBtn);
     elements.viewerContent.appendChild(nextBtn);
   }
-  
+
   // Counter
   const counter = document.createElement('div');
   counter.className = 'viewer-counter';
   counter.textContent = `${state.currentViewerIndex + 1} / ${state.currentFiles.length}`;
   elements.viewerContent.appendChild(counter);
-  
+
   // Context menu
   media.addEventListener('contextmenu', (e) => {
     e.preventDefault();
     showContextMenu(e.clientX, e.clientY, file);
   });
-  
+
   elements.viewerContent.appendChild(media);
 }
 
 function navigateViewer(direction) {
   state.currentViewerIndex += direction;
-  
+
   if (state.currentViewerIndex < 0) {
     state.currentViewerIndex = state.currentFiles.length - 1;
   } else if (state.currentViewerIndex >= state.currentFiles.length) {
     state.currentViewerIndex = 0;
   }
-  
+
   showCurrentMedia();
 }
 
@@ -626,22 +626,22 @@ function setupEventListeners() {
       await loadFolder(folderPath);
     }
   });
-  
+
   // Settings panel
   elements.settingsBtn.addEventListener('click', () => {
     elements.settingsPanel.classList.add('show');
   });
-  
+
   elements.closeSettingsBtn.addEventListener('click', () => {
     elements.settingsPanel.classList.remove('show');
   });
-  
+
   // Sidebar toggle
   elements.toggleSidebar.addEventListener('click', () => {
     elements.sidebar.classList.toggle('collapsed');
     elements.toggleSidebar.textContent = elements.sidebar.classList.contains('collapsed') ? '▶' : '◀';
   });
-  
+
   // Viewer close
   elements.closeViewerBtn.addEventListener('click', closeViewer);
   elements.viewerModal.addEventListener('click', (e) => {
@@ -649,21 +649,21 @@ function setupEventListeners() {
       closeViewer();
     }
   });
-  
+
   // Search
   elements.searchInput.addEventListener('input', (e) => {
     state.searchQuery = e.target.value.toLowerCase();
     elements.clearSearchBtn.style.display = state.searchQuery ? 'block' : 'none';
     filterGallery();
   });
-  
+
   elements.clearSearchBtn.addEventListener('click', () => {
     elements.searchInput.value = '';
     state.searchQuery = '';
     elements.clearSearchBtn.style.display = 'none';
     filterGallery();
   });
-  
+
   // View controls
   document.querySelectorAll('.view-controls .control-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
@@ -671,7 +671,7 @@ function setupEventListeners() {
       await window.api.setSetting('defaultView', view);
       state.currentSettings.defaultView = view;
       renderGallery(state.currentFiles);
-      
+
       // Update active state
       document.querySelectorAll('.view-controls .control-btn').forEach(b => {
         b.classList.remove('active');
@@ -679,40 +679,40 @@ function setupEventListeners() {
       btn.classList.add('active');
     });
   });
-  
+
   // Sort controls
   document.getElementById('sortSelect').addEventListener('change', async (e) => {
     await window.api.setSetting('sortBy', e.target.value);
     state.currentSettings.sortBy = e.target.value;
     renderGallery(state.currentFiles);
   });
-  
+
   document.getElementById('sortOrderBtn').addEventListener('click', async () => {
     const newOrder = state.currentSettings.sortOrder === 'asc' ? 'desc' : 'asc';
     await window.api.setSetting('sortOrder', newOrder);
     state.currentSettings.sortOrder = newOrder;
     renderGallery(state.currentFiles);
   });
-  
+
   // Filter controls
   document.getElementById('filterSelect').addEventListener('change', async (e) => {
     await window.api.setSetting('filterBy', e.target.value);
     state.currentSettings.filterBy = e.target.value;
     renderGallery(state.currentFiles);
   });
-  
+
   // Bulk controls
   document.getElementById('selectAllBtn')?.addEventListener('click', selectAllFiles);
   document.getElementById('deselectAllBtn')?.addEventListener('click', clearSelection);
-  
+
   document.getElementById('bulkDeleteBtn')?.addEventListener('click', async () => {
     if (state.selectedFiles.size === 0) return;
-    
+
     const count = state.selectedFiles.size;
     if (!confirm(`Are you sure you want to delete ${count} file${count > 1 ? 's' : ''}?`)) {
       return;
     }
-    
+
     let deletedCount = 0;
     for (const filePath of state.selectedFiles) {
       const result = await window.api.deleteFile(filePath);
@@ -722,14 +722,14 @@ function setupEventListeners() {
         if (index !== -1) {
           state.currentFiles.splice(index, 1);
         }
-        
+
         const favIndex = state.currentSettings.favorites.indexOf(filePath);
         if (favIndex > -1) {
           state.currentSettings.favorites.splice(favIndex, 1);
         }
       }
     }
-    
+
     if (deletedCount > 0) {
       await window.api.setSetting('favorites', state.currentSettings.favorites);
       showToast(`Deleted ${deletedCount} file${deletedCount > 1 ? 's' : ''}`, 'success');
@@ -737,7 +737,7 @@ function setupEventListeners() {
       await loadFolder(state.currentRootPath, false);
     }
   });
-  
+
   document.getElementById('bulkMoveBtn')?.addEventListener('click', async () => {
     if (state.selectedFiles.size === 0) return;
     const destFolder = await window.api.openDirectory();
@@ -755,7 +755,7 @@ function setupEventListeners() {
           }
         }
       }
-      
+
       if (movedCount > 0) {
         showToast(`Moved ${movedCount} file${movedCount > 1 ? 's' : ''}`, 'success');
         clearSelection();
@@ -763,7 +763,7 @@ function setupEventListeners() {
       }
     }
   });
-  
+
   // Settings changes - Theme color buttons
   document.querySelectorAll('.theme-color-btn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
@@ -771,67 +771,67 @@ function setupEventListeners() {
       await window.api.setSetting('themeColor', color);
       state.currentSettings.themeColor = color;
       applyTheme(color);
-      
+
       // Update active state
       document.querySelectorAll('.theme-color-btn').forEach(b => b.classList.remove('active'));
       e.target.classList.add('active');
     });
   });
-  
+
   document.getElementById('autoPlayVideos').addEventListener('change', async (e) => {
     await window.api.setSetting('autoPlayVideos', e.target.checked);
     state.currentSettings.autoPlayVideos = e.target.checked;
   });
-  
+
   document.getElementById('showFileNames').addEventListener('change', async (e) => {
     await window.api.setSetting('showFileNames', e.target.checked);
     state.currentSettings.showFileNames = e.target.checked;
     renderGallery(state.currentFiles);
   });
-  
+
   document.getElementById('thumbnailSize').addEventListener('change', async (e) => {
     await window.api.setSetting('thumbnailSize', e.target.value);
     state.currentSettings.thumbnailSize = e.target.value;
     elements.gallery.className = `gallery thumbnail-${e.target.value}`;
   });
-  
+
   document.getElementById('viewerMode').addEventListener('change', async (e) => {
     await window.api.setSetting('viewerMode', e.target.value);
     state.currentSettings.viewerMode = e.target.value;
   });
-  
+
   document.getElementById('slideShowInterval').addEventListener('change', async (e) => {
     const value = parseInt(e.target.value) * 1000;
     await window.api.setSetting('slideShowInterval', value);
     state.currentSettings.slideShowInterval = value;
   });
-  
+
   document.getElementById('resetSettings').addEventListener('click', async () => {
     await window.api.resetSettings();
     location.reload();
   });
-  
+
   // Context menu
   elements.contextMenu.addEventListener('click', async (e) => {
     const item = e.target.closest('.context-menu-item');
     if (!item) return;
-    
+
     const action = item.dataset.action;
     const targetPath = contextMenuTargetPath;
     hideContextMenu();
-    
+
     try {
       switch (action) {
         case 'copy':
           const copyResult = await window.api.copyFile(targetPath);
           if (copyResult.success) showToast(copyResult.message, 'success');
           break;
-          
+
         case 'cut':
           const cutResult = await window.api.cutFile(targetPath);
           if (cutResult.success) showToast(cutResult.message, 'success');
           break;
-          
+
         case 'paste':
           const pasteDir = state.currentFolderPath || state.currentRootPath;
           const pasteResult = await window.api.pasteFile(pasteDir);
@@ -840,20 +840,20 @@ function setupEventListeners() {
             await loadFolder(state.currentRootPath, false);
           }
           break;
-          
+
         case 'edit':
           await window.api.editFile(targetPath);
           break;
-          
+
         case 'showInFolder':
           await window.api.showInFolder(targetPath);
           break;
-          
+
         case 'copyPath':
           const pathResult = await window.api.copyPath(targetPath);
           if (pathResult.success) showToast(pathResult.message, 'success');
           break;
-          
+
         case 'properties':
           const propsResult = await window.api.getFileProperties(targetPath);
           if (propsResult.success) {
@@ -867,7 +867,7 @@ Modified: ${new Date(props.modified).toLocaleString()}
             `.trim());
           }
           break;
-          
+
         case 'delete':
           if (confirm('Are you sure you want to delete this file?')) {
             const deleteResult = await window.api.deleteFile(targetPath);
@@ -877,7 +877,7 @@ Modified: ${new Date(props.modified).toLocaleString()}
             }
           }
           break;
-          
+
         case 'rotate90':
           const rotate90Result = await window.api.rotateImage(targetPath, 90);
           if (rotate90Result.success) {
@@ -885,7 +885,7 @@ Modified: ${new Date(props.modified).toLocaleString()}
             await loadFolder(state.currentRootPath, false);
           }
           break;
-          
+
         case 'rotate270':
           const rotate270Result = await window.api.rotateImage(targetPath, 270);
           if (rotate270Result.success) {
@@ -893,7 +893,7 @@ Modified: ${new Date(props.modified).toLocaleString()}
             await loadFolder(state.currentRootPath, false);
           }
           break;
-          
+
         case 'flipH':
           const flipHResult = await window.api.flipImage(targetPath, 'horizontal');
           if (flipHResult.success) {
@@ -901,7 +901,7 @@ Modified: ${new Date(props.modified).toLocaleString()}
             await loadFolder(state.currentRootPath, false);
           }
           break;
-          
+
         case 'flipV':
           const flipVResult = await window.api.flipImage(targetPath, 'vertical');
           if (flipVResult.success) {
@@ -909,7 +909,7 @@ Modified: ${new Date(props.modified).toLocaleString()}
             await loadFolder(state.currentRootPath, false);
           }
           break;
-          
+
         case 'addToCollection':
           const favorites = state.currentSettings.favorites || [];
           const index = favorites.indexOf(targetPath);
@@ -926,17 +926,17 @@ Modified: ${new Date(props.modified).toLocaleString()}
           break;
       }
     } catch (err) {
-      showToast('Action failed: ' + err.message, 'error');
+      showToast(`Action failed: ${  err.message}`, 'error');
     }
   });
-  
+
   // Close context menu on outside click
   document.addEventListener('click', (e) => {
     if (!elements.contextMenu.contains(e.target)) {
       hideContextMenu();
     }
   });
-  
+
   // Keyboard shortcuts
   document.addEventListener('keydown', async (e) => {
     // Viewer navigation
@@ -950,7 +950,7 @@ Modified: ${new Date(props.modified).toLocaleString()}
       }
       return;
     }
-    
+
     // Global shortcuts
     if (e.ctrlKey && e.key === 'a') {
       e.preventDefault();
@@ -975,12 +975,12 @@ function filterGallery() {
     renderGallery(state.currentFiles);
     return;
   }
-  
+
   const filtered = state.currentFiles.filter(file => {
     const fileName = file.split('\\').pop().split('/').pop().toLowerCase();
     return fileName.includes(state.searchQuery);
   });
-  
+
   renderGallery(filtered);
 }
 
@@ -1023,7 +1023,7 @@ async function init() {
   setupEventListeners();
   setupIPCListeners();
   await initSettings();
-  
+
   console.log('NeoNinja View v1.2 initialized successfully');
 }
 
