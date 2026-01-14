@@ -4,7 +4,9 @@ yarn.lock
 
 # Build output
 dist/
-build/
+# build/ is ignored, but we track build/icon.ico for the app icon
+build/*
+!build/icon.ico
 out/
 
 # OS files
