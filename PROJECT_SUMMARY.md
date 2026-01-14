@@ -2,7 +2,7 @@
 
 ## Overview
 
-NeoNinja View v1.2 is a complete rebuild of the grok-viewer application, transformed into a high-performance, standalone media viewer with a modern dark theme and neon accents. The application maintains all core functionality while introducing significant performance optimizations, enhanced UI/UX, and creative new features.
+NeoNinja View v1.2 is a high-performance, standalone media viewer with a modern dark theme and neon accents. Built from the ground up as a professional media management application, it offers comprehensive functionality with significant performance optimizations, enhanced UI/UX, and creative new features.
 
 ## Key Improvements Over Original
 
@@ -206,20 +206,8 @@ neoninja-view/
 - [ ] Format conversion
 - [ ] PDF viewing support
 
-## Migration from grok-viewer
-
-Users upgrading from grok-viewer will benefit from:
-
-1. **Same Core Features**: All familiar functionality preserved
-2. **Enhanced Performance**: Significantly faster file operations
-3. **Modern UI**: Beautiful new design with better usability
-4. **More Features**: Numerous new capabilities
-5. **Better Stability**: Improved error handling and memory management
-
-Settings are automatically migrated or can be reset to defaults.
-
 ## Conclusion
 
-NeoNinja View v1.2 represents a complete transformation of the original grok-viewer into a modern, high-performance media viewer. The application maintains all core functionality while introducing significant improvements in performance, design, and user experience. The standalone nature, optimized codebase, and creative features make it a powerful tool for managing and viewing local media files.
+NeoNinja View v1.2 is a modern, high-performance media viewer built from the ground up for professional media management. The application offers comprehensive functionality with significant improvements in performance, design, and user experience. The standalone nature, optimized codebase, and creative features make it a powerful tool for managing and viewing local media files.
 
 **Built with passion for performance and design** 🥷
