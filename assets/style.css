@@ -58,6 +58,11 @@ body {
   background-attachment: fixed;
 }
 
+/* Fallback: Use VSCode resource URL if local file not available */
+body {
+  background-image: url('file:///c:/Users/kentb/Downloads/neoninja_layout with logo.jpg'), url('./neoninja-layout.jpg');
+}
+
 /* Dark overlay for better readability */
 body::before {
   content: '';
@@ -109,13 +114,15 @@ body::before {
 .logo {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
+  padding: 8px 0;
 }
 
 .logo-icon {
-  width: 32px;
-  height: 32px;
-  filter: drop-shadow(0 0 8px var(--theme-glow));
+  width: 48px;
+  height: 48px;
+  filter: drop-shadow(0 0 12px var(--theme-glow));
+  min-width: 48px;
 }
 
 .logo-text {
@@ -124,24 +131,17 @@ body::before {
 }
 
 .logo-text h1 {
-  font-size: 18px;
-  font-weight: 700;
-  background: linear-gradient(135deg, var(--theme-primary), var(--theme-secondary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  letter-spacing: 0.5px;
+  font-size: 20px;
+  font-weight: 800;
+  color: #00FFFF;
+  letter-spacing: 2px;
   margin: 0;
-  line-height: 1.2;
+  line-height: 1;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
 }
 
 .logo-subtitle {
-  font-size: 11px;
-  color: var(--text-secondary);
-  text-transform: none;
-  letter-spacing: 0.5px;
-  margin-top: 2px;
-  font-weight: 400;
+  display: none;
 }
 
 /* Search Container */

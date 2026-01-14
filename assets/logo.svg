@@ -1,0 +1,51 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer circle -->
+  <circle cx="64" cy="64" r="60" stroke="#00FFFF" stroke-width="2" fill="none" opacity="0.8"/>
+  
+  <!-- Inner glow circle -->
+  <circle cx="64" cy="64" r="60" stroke="#00FFFF" stroke-width="1" fill="none" opacity="0.3" filter="url(#glow)"/>
+  
+  <!-- Ninja mask outline -->
+  <g transform="translate(64, 64)">
+    <!-- Head -->
+    <circle cx="0" cy="-8" r="18" stroke="#00FFFF" stroke-width="2" fill="none"/>
+    
+    <!-- Left eye opening -->
+    <ellipse cx="-10" cy="-12" rx="5" ry="6" stroke="#00FFFF" stroke-width="1.5" fill="none"/>
+    
+    <!-- Right eye opening -->
+    <ellipse cx="10" cy="-12" rx="5" ry="6" stroke="#00FFFF" stroke-width="1.5" fill="none"/>
+    
+    <!-- Eye glow -->
+    <ellipse cx="-10" cy="-12" rx="3" ry="4" fill="#00FFFF" opacity="0.6"/>
+    <ellipse cx="10" cy="-12" rx="3" ry="4" fill="#00FFFF" opacity="0.6"/>
+    
+    <!-- Nose -->
+    <path d="M 0 -8 L 0 2" stroke="#00FFFF" stroke-width="1.5" fill="none"/>
+    
+    <!-- Mask mouth line -->
+    <path d="M -8 6 Q 0 8 8 6" stroke="#00FFFF" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    
+    <!-- Neck/Shoulder -->
+    <path d="M -12 12 L -10 22 M 12 12 L 10 22" stroke="#00FFFF" stroke-width="1.5" fill="none"/>
+    
+    <!-- Shuriken accent -->
+    <g opacity="0.6">
+      <line x1="0" y1="-28" x2="0" y2="-20" stroke="#00FFFF" stroke-width="1"/>
+      <line x1="20" y1="-20" x2="24" y2="-24" stroke="#00FFFF" stroke-width="1"/>
+      <line x1="20" y1="20" x2="24" y2="24" stroke="#00FFFF" stroke-width="1"/>
+      <line x1="-20" y1="20" x2="-24" y2="24" stroke="#00FFFF" stroke-width="1"/>
+    </g>
+  </g>
+  
+  <!-- Glow filter -->
+  <defs>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+</svg>
