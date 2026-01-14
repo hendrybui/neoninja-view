@@ -1,0 +1,100 @@
+name: Build & Release
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+        include:
+          - os: windows-latest
+            artifact: 'dist/NeoNinja View Setup *.exe'
+            artifact_name: 'NeoNinja-View-Setup.exe'
+          - os: macos-latest
+            artifact: 'dist/NeoNinja View-*.dmg'
+            artifact_name: 'NeoNinja-View.dmg'
+          - os: ubuntu-latest
+            artifact: 'dist/NeoNinja View-*.AppImage'
+            artifact_name: 'NeoNinja-View.AppImage'
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.os }}-build
+          path: |
+            dist/**/*
+            !dist/linux-unpacked
+            !dist/win-unpacked
+          retention-days: 30
+
+      - name: Create Release (on tag)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            dist/NeoNinja View Setup*.exe
+            dist/NeoNinja View-*.dmg
+            dist/NeoNinja View-*.AppImage
+            dist/NeoNinja View-*.snap
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  release-notes:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Generate release notes
+        uses: softprops/action-gh-release@v1
+        with:
+          body: |
+            ## NeoNinja View Release
+
+            ### Downloads
+            - **Windows**: NeoNinja View Setup.exe
+            - **macOS**: NeoNinja View.dmg
+            - **Linux**: NeoNinja View.AppImage or .snap
+
+            ### Installation
+            - Windows: Double-click the installer
+            - macOS: Drag app to Applications folder
+            - Linux: Make AppImage executable and run
+
+            ### What's New
+            See CHANGELOG.md for details.
+
+            ### System Requirements
+            - **Windows**: Windows 10 or later
+            - **macOS**: macOS 11 or later
+            - **Linux**: Any modern Linux distribution
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
