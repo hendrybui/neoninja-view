@@ -4,10 +4,17 @@ yarn.lock
 
 # Build output
 dist/
-# build/ is ignored, but we track build/icon.ico for the app icon
-build/*
-!build/icon.ico
+build/
 out/
+
+# Generated icons (all generated, not tracked)
+build/icon.ico
+build/icon.icns
+build/icon.png
+build/.icon-temp/
+
+# Source icon (keep this in git)
+!assets/source-icon.png
 
 # OS files
 .DS_Store
