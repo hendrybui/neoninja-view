@@ -23,7 +23,7 @@ NeoNinja View v1.2 is a high-performance, standalone media viewer with a modern 
 - **Modern Components**: Custom-styled buttons, inputs, selects, and modals
 
 ### 3. Enhanced Features ✨
-- **Multiple View Modes**: Grid, List, and Detail views for different use cases
+- **Multiple View Modes**: Grid, List, Flex ,Detail views live 3-4 sec preview on video file for different use cases
 - **Real-time Search**: Instant filtering as you type
 - **Favorites System**: Mark and organize favorite files with persistent storage
 - **Batch Operations**: Select and move/delete multiple files simultaneously
@@ -100,7 +100,7 @@ neoninja-view/
 
 ## New Creative Features
 
-🎨 **Theme System**: 6 neon color themes with smooth transitions
+🎨 **Theme System**: 6 neon color themes with smooth transitions add glow effects 
 📊 **Statistics Dashboard**: Real-time file counts in folder tree
 ⭐ **Favorites**: Persistent favorite file collection
 🔍 **Instant Search**: Real-time filtering as you type
